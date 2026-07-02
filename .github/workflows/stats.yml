@@ -1,0 +1,31 @@
+name: stats
+on:
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DenverCoder1/github-readme-streak-stats@main
+        with:
+          options: user=${{ github.repository_owner }}&theme=telegram&hide_border=true&background=00000000&hide_longest_streak=true&date_format=%5BY.%5Dn.j
+          path: stats.svg
+          token: ${{ secrets.GH_TOKEN }}
+      - run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git checkout --orphan fresh
+          git add stats.svg
+          git commit -m "auto update" || true
+          git branch -D ♦︎ || true
+          git branch -m ♦︎
+          git push origin ♦︎ --force
+      - uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 0
